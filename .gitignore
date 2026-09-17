@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# SQLite database storage
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Testing coverage
+coverage/
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+powershell.cmd

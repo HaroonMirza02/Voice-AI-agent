@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  voice-patient-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: voice_patient_agent
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - DB_PATH=/app/data/patients.db
+      - BASE_URL=http://localhost:3000
+      - VAPI_API_KEY=${VAPI_API_KEY:-}
+      - VAPI_PHONE_NUMBER=${VAPI_PHONE_NUMBER:-}
+      - VAPI_ASSISTANT_ID=${VAPI_ASSISTANT_ID:-}
+    volumes:
+      - sqlite_data:/app/data
+
+volumes:
+  sqlite_data:
+    name: carepoint_sqlite_data

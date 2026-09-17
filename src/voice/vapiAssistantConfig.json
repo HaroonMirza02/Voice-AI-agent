@@ -1,0 +1,113 @@
+{
+  "name": "CarePoint Patient Registration Agent",
+  "transcriber": {
+    "provider": "deepgram",
+    "model": "nova-2",
+    "language": "en-US"
+  },
+  "model": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "temperature": 0.3,
+    "systemPrompt": "Refer to src/voice/systemPrompt.md for complete text.",
+    "tools": [
+      {
+        "async": false,
+        "type": "function",
+        "function": {
+          "name": "check_existing_patient",
+          "description": "Checks whether a patient is already registered under the given phone number.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "phone_number": {
+                "type": "string",
+                "description": "10-digit US phone number"
+              }
+            },
+            "required": ["phone_number"]
+          }
+        }
+      },
+      {
+        "async": false,
+        "type": "function",
+        "function": {
+          "name": "create_patient",
+          "description": "Persists confirmed patient registration demographics to the clinic database.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "first_name": { "type": "string" },
+              "last_name": { "type": "string" },
+              "date_of_birth": { "type": "string" },
+              "sex": { "type": "string", "enum": ["Male", "Female", "Other", "Decline to Answer"] },
+              "phone_number": { "type": "string" },
+              "address_line_1": { "type": "string" },
+              "address_line_2": { "type": "string" },
+              "city": { "type": "string" },
+              "state": { "type": "string" },
+              "zip_code": { "type": "string" },
+              "email": { "type": "string" },
+              "insurance_provider": { "type": "string" },
+              "insurance_member_id": { "type": "string" },
+              "preferred_language": { "type": "string" },
+              "emergency_contact_name": { "type": "string" },
+              "emergency_contact_phone": { "type": "string" }
+            },
+            "required": [
+              "first_name",
+              "last_name",
+              "date_of_birth",
+              "sex",
+              "phone_number",
+              "address_line_1",
+              "city",
+              "state",
+              "zip_code"
+            ]
+          }
+        }
+      },
+      {
+        "async": false,
+        "type": "function",
+        "function": {
+          "name": "update_patient",
+          "description": "Updates demographic fields on an existing patient record.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "patient_id": { "type": "string" },
+              "first_name": { "type": "string" },
+              "last_name": { "type": "string" },
+              "date_of_birth": { "type": "string" },
+              "sex": { "type": "string" },
+              "phone_number": { "type": "string" },
+              "address_line_1": { "type": "string" },
+              "address_line_2": { "type": "string" },
+              "city": { "type": "string" },
+              "state": { "type": "string" },
+              "zip_code": { "type": "string" },
+              "email": { "type": "string" },
+              "insurance_provider": { "type": "string" },
+              "insurance_member_id": { "type": "string" },
+              "preferred_language": { "type": "string" },
+              "emergency_contact_name": { "type": "string" },
+              "emergency_contact_phone": { "type": "string" }
+            },
+            "required": ["patient_id"]
+          }
+        }
+      }
+    ]
+  },
+  "voice": {
+    "provider": "11labs",
+    "voiceId": "21m00Tcm4TlvDq8ikWAM"
+  },
+  "server": {
+    "url": "https://<your-deployment-url>/api/voice/webhook"
+  },
+  "firstMessage": "Hello! Thank you for calling CarePoint Health. My name is Clara, and I'll be helping you with your patient registration today. May I confirm what phone number you're calling from?"
+}

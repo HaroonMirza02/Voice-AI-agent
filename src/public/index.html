@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarePoint Health - Voice Patient Registration Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">CarePoint Health</h1>
+          <p class="brand-subtitle">Voice AI Patient Registration & Intake Console</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="status-indicator online">
+          <span class="status-dot"></span> System Live & Persisted
+        </span>
+        <button class="btn btn-secondary" id="openSimulatorBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          Voice Flow Simulator
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Active Registered Patients</span>
+        <span class="stat-value" id="activePatientsCount">0</span>
+        <span class="stat-meta">Excluding soft-deleted</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Database Persistence</span>
+        <span class="stat-value text-accent">SQLite WAL</span>
+        <span class="stat-meta">Survives server restarts</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Voice Telephony Protocol</span>
+        <span class="stat-value text-teal">Vapi AI Tools</span>
+        <span class="stat-meta">Natural flow & duplicate detection</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total Voice Sessions</span>
+        <span class="stat-value" id="totalCallsCount">0</span>
+        <span class="stat-meta">Logged with payloads</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-container">
+      <div class="tab-list">
+        <button class="tab-button active" data-tab="patientsTab">Patients Directory</button>
+        <button class="tab-button" data-tab="callsTab">Voice Call Logs & Audit</button>
+        <button class="tab-button" data-tab="architectureTab">System Architecture</button>
+      </div>
+    </div>
+
+    <!-- Tab 1: Patients Directory -->
+    <section id="patientsTab" class="tab-content active">
+      <!-- Filter Controls Bar -->
+      <div class="card filter-card">
+        <div class="filter-header">
+          <h3>Filter Directory</h3>
+          <span class="filter-hint">Matching API Query Filters</span>
+        </div>
+        <form id="filterForm" class="filter-grid">
+          <div class="form-group">
+            <label for="filterLastName">Last Name</label>
+            <input type="text" id="filterLastName" placeholder="e.g. Vance, Chen">
+          </div>
+          <div class="form-group">
+            <label for="filterDob">Date of Birth</label>
+            <input type="date" id="filterDob">
+          </div>
+          <div class="form-group">
+            <label for="filterPhone">Phone Number</label>
+            <input type="text" id="filterPhone" placeholder="10-digit phone">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="applyFilterBtn">Filter</button>
+            <button type="button" class="btn btn-outline" id="resetFilterBtn">Reset</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Patients Table Card -->
+      <div class="card table-card">
+        <div class="card-header">
+          <div>
+            <h2>Registered Patients</h2>
+            <p class="text-muted">Live records synced with SQLite database</p>
+          </div>
+          <button class="btn btn-secondary" id="refreshPatientsBtn">Refresh List</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>DOB</th>
+                <th>Sex</th>
+                <th>Phone Number</th>
+                <th>City, State</th>
+                <th>Insurance</th>
+                <th>Registered At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="patientsTableBody">
+              <tr>
+                <td colspan="8" class="text-center py-4">Loading patient records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Voice Call Logs -->
+    <section id="callsTab" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Voice Intake Call Logs</h2>
+            <p class="text-muted">Audit trail of completed calls, tool executions, and payload snapshots</p>
+          </div>
+          <button class="btn btn-secondary" id="refreshCallsBtn">Refresh Logs</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Call ID</th>
+                <th>Caller Phone</th>
+                <th>Status</th>
+                <th>Duration</th>
+                <th>Timestamp</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody id="callLogsTableBody">
+              <tr>
+                <td colspan="6" class="text-center py-4">Loading call logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: System Architecture -->
+    <section id="architectureTab" class="tab-content">
+      <div class="card">
+        <h2>Architecture & Conversational Guardrails</h2>
+        <div class="arch-content">
+          <div class="arch-section">
+            <h3>Strict Server-Side Validation</h3>
+            <p>Every field submitted by the voice agent or REST API is validated independently. Client and LLM inputs are never trusted implicitly. If invalid input is received, granular error details are returned for targeted conversational re-prompting.</p>
+          </div>
+          <div class="arch-section">
+            <h3>Zero-Loss SQLite Persistence</h3>
+            <p>Built with <code>better-sqlite3</code> configured in WAL mode (Write-Ahead Logging). Transactions are immediately flushed to disk. Records survive restarts and crash recoveries.</p>
+          </div>
+          <div class="arch-section">
+            <h3>Edge Case Safeguards</h3>
+            <ul>
+              <li><strong>Connection Drop Mid-Call:</strong> No patient row is inserted until explicit verbal confirmation is given at the read-back stage. Prevents orphaned dirty records.</li>
+              <li><strong>Duplicate Detection:</strong> Incoming phone numbers are matched against active records. If found, the agent offers an update path instead of creating duplicate records.</li>
+              <li><strong>DB Write Failure:</strong> If writing to disk fails after confirmation, the agent speaks an empathetic retry message rather than silence.</li>
+              <li><strong>Mid-Flow Corrections:</strong> Callers can spell or correct fields at any point without restarting the entire questionnaire.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Patient Details -->
+  <div class="modal" id="patientModal">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalPatientName">Patient Profile</h3>
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" id="modalPatientContent">
+        <!-- Injected via JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="closeModalBottomBtn">Close</button>
+        <button class="btn btn-danger" id="modalDeleteBtn">Soft Delete Patient</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Voice Flow Simulator -->
+  <div class="modal" id="simulatorModal">
+    <div class="modal-backdrop" id="simBackdrop"></div>
+    <div class="modal-dialog simulator-dialog">
+      <div class="modal-header">
+        <div>
+          <h3>Voice Agent Simulator</h3>
+          <p class="text-muted" style="margin:0; font-size: 13px;">Test tool calls and inspect the agent's conversational responses</p>
+        </div>
+        <button class="modal-close" id="closeSimBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="sim-grid">
+          <div class="sim-controls">
+            <div class="form-group">
+              <label for="simToolSelect">Tool to Execute</label>
+              <select id="simToolSelect" class="form-control">
+                <option value="check_existing_patient">check_existing_patient (Duplicate Detection)</option>
+                <option value="create_patient">create_patient (Register New Patient)</option>
+                <option value="update_patient">update_patient (Update Existing Record)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="simPayload">Tool Arguments (JSON)</label>
+              <textarea id="simPayload" rows="10" class="code-area"></textarea>
+            </div>
+
+            <button class="btn btn-primary" id="runSimToolBtn" style="width: 100%;">
+              Execute Voice Tool
+            </button>
+          </div>
+
+          <div class="sim-output">
+            <label>Agent's Spoken Speech Response</label>
+            <div class="speech-bubble" id="simSpeechOutput">
+              Select a tool and click "Execute Voice Tool" to test conversational output.
+            </div>
+
+            <label style="margin-top: 16px;">Raw Webhook Response Payload</label>
+            <pre class="code-box" id="simRawOutput">{}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p>CarePoint Health Intake System &bull; Voice AI Technical Assessment &bull; Node.js + SQLite + Vapi Integration</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
