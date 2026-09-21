@@ -31,8 +31,5 @@ USER node
 
 EXPOSE 3000
 
-# Mount persistent volume for SQLite database
-VOLUME ["/app/data"]
-
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "src/server.js"]
