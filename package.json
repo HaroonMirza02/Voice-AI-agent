@@ -12,7 +12,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
     "cors": "^2.8.6",

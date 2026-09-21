@@ -3,7 +3,7 @@ services:
     name: carepoint-voice-patient-agent
     env: node
     plan: starter
-    buildCommand: npm ci
+    buildCommand: npm install
     startCommand: node src/server.js
     disk:
       name: sqlite-data

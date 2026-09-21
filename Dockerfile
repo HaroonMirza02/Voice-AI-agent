@@ -1,15 +1,15 @@
 # Production Dockerfile for Voice AI Patient Registration System
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Install build dependencies for better-sqlite3 native compilation if needed
+# Install build dependencies for better-sqlite3 native compilation
 RUN apk add --no-cache python3 make g++
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
